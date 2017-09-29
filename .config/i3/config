@@ -149,8 +149,112 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# Cycle wallpapers and apply new colorscheme.
+bindsym $mod+n exec "wal -i $HOME/wallpapers/inuse -o wal-set"; exec $HOME/.config/polybar/launch.sh
+
+set $bg-color 	         #2f343f
+set $inactive-bg-color   #2f343f
+set $text-color          #f3f4f5
+set $inactive-text-color #676E7D
+set $urgent-bg-color     #E53935
+
+# window colors
+#                       border              background         text                 indicator
+#client.focused          $bg-color           $bg-color          $text-color          #00ff00
+#client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color #00ff00
+#client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color #00ff00
+#client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          #00ff00
+
+
+
+#in order to work with dylanaraps/wal we use this to change colors on the fly
+# Set colors from Xresources
+# Change 'color7' and 'color2' to whatever colors you want i3 to use
+# from the generated scheme.
+# NOTE: The '#f0f0f0' in the lines below is the color i3 will use if
+# it fails to get colors from Xresources for some reason.
+set_from_resource $fg i3wm.color7 #f0f0f0
+set_from_resource $bg i3wm.color2 #f0f0f0
+
+# class                     border  backgr. text indicator child_border
+client.focused              $bg     $bg     $fg  $bg       $bg
+client.focused_inactive     $bg     $bg     $fg  $bg       $bg
+client.unfocused            $bg     $bg     $fg  $bg       $bg
+client.urgent               $bg     $bg     $fg  $bg       $bg
+client.placeholder          $bg     $bg     $fg  $bg       $bg
+client.background           $bg
+
+
+# Media Keys
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -q sset Master 2%+
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer -q sset Master 2%-
+bindsym XF86AudioMute exec --no-startup-id amixer -q sset Master toggle
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl -p spotify play-pause
+bindsym XF86AudioNext exec playerctl -p spotify next
+bindsym XF86AudioPrev exec playerctl -p spotify previous
+
+
+
+# Add a 5px border to all windows.
+# for_window [class="^.*"] border normal 0
+
+# Float all windows by default.
+# for_window [class="^.*"] floating enable
+
+# Title bars with padding.
+# We first set the titlebar font size to a larger font size than desired
+# to get a good padding amount. We then use pango markup to force i3 to
+# print the desired font size. This gives us large titlebars with a small
+# font.
+font pango:lemon 0
+for_window [class=".*"] title_format "<span font='Artwiz Lime 0'> > %title</span>"
+
+for_window [class="^.*"] border pixel 0
+for_window [floating] border pixel 10
+for_window [tiling] border pixel 0
+
+gaps inner 15
+gaps outer 0
+#smart_gaps on
+
+hide_edge_borders both
+
+# bar
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+#bar {
+#  	status_command i3blocks -c /home/booker/.i3/i3blocks.conf
+#    status_command i3status
+#	colors {
+#		background $bg
+#	    	separator #757575
+#		#                  border             background         text
+#		focused_workspace  $bg                $bg                $text-color
+#		active_workspace   $bg                $bg                $text-color
+#		inactive_workspace $bg                $bg                $inactive-text-color
+#		urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
+#	}
+#}
+
+# exec --no-startup-id redshift-gtk
+# Start Polybar (instead of i3bar)
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
+# Add this to your .xinitrc or whatever file starts programs on startup.
+exec --no-startup-id  wal -i "$(< "${HOME}/.cache/wal/wal")"
+
+exec compton -b -f --backend glx -cCfFbG -I 0.05 -D 6 -r5 -l-6 -t-5 -o.99 --vsync opengl-mswc
+# exec compton -f
+# exec compton -cCzG -t-3 -l-5 -r4 \
+# --config /dev/null --backend glx \
+# --vsync opengl-swc \
+# --shadow-exclude "name = 'synapse'" \
+# --shadow-ignore-shaped --unredir-if-possible \
+# --glx-no-stencil --paint-on-overlay \
+# --glx-swap-method 3 --glx-no-rebind-pixmap
+
+exec xrdb ~/.Xresources
