@@ -1,1 +1,7 @@
 .vboxclient-*
+.bash_history
+.Xauthority
+.xsession-*
+.viminfo
+.cache
+Downloads
